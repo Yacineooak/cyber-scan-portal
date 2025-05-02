@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,23 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Cybersecurity themed colors
+				cyber: {
+					primary: '#0f1c2e',
+					secondary: '#1e3553',
+					accent: '#00b4d8',
+					success: '#00ff9d',
+					warning: '#ffd166',
+					error: '#ff5a5f',
+					info: '#4cc9f0',
+					muted: '#2a3a4a',
+				},
+				status: {
+					open: '#10b981',    // Green
+					closed: '#ef4444',  // Red
+					filtered: '#f59e0b', // Amber
+					unknown: '#6b7280',  // Gray
 				}
 			},
 			borderRadius: {
@@ -84,12 +102,26 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						opacity: '1',
+						boxShadow: '0 0 0 0 rgba(0, 180, 216, 0.4)'
+					},
+					'50%': {
+						opacity: '0.8',
+						boxShadow: '0 0 0 10px rgba(0, 180, 216, 0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+			},
+			fontFamily: {
+				mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
