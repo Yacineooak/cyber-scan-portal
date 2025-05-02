@@ -1,6 +1,7 @@
 
 import { AlertTriangle, CheckCircle, Activity, Shield, Server, Search, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const StatsCard = ({ title, value, icon, className }: { title: string; value: string; icon: React.ReactNode; className?: string }) => (
   <Card className={`p-6 ${className}`}>
@@ -100,9 +101,9 @@ export function Dashboard() {
             <RecentScanItem time="11:15" target="192.168.0.105" status="Failed" />
           </div>
           <div className="bg-cyber-muted p-4 flex justify-center">
-            <button className="text-cyber-accent hover:text-cyber-info transition-colors">
+            <Link to="/scanner" className="text-cyber-accent hover:text-cyber-info transition-colors">
               View All Scans
-            </button>
+            </Link>
           </div>
         </Card>
 
@@ -117,9 +118,9 @@ export function Dashboard() {
             <VulnerabilityItem severity="Low" title="CVE-2023-3456" count={2} />
           </div>
           <div className="bg-cyber-muted p-4 flex justify-center">
-            <button className="text-cyber-accent hover:text-cyber-info transition-colors">
+            <Link to="/cves" className="text-cyber-accent hover:text-cyber-info transition-colors">
               View All Vulnerabilities
-            </button>
+            </Link>
           </div>
         </Card>
       </div>
@@ -129,22 +130,22 @@ export function Dashboard() {
           <h3 className="font-medium text-lg">Quick Actions</h3>
         </div>
         <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
+          <Link to="/scanner" className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
             <Search size={24} className="text-cyber-accent mb-2" />
             <span>New Scan</span>
-          </button>
-          <button className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
+          </Link>
+          <Link to="/sniffer" className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
             <Activity size={24} className="text-cyber-info mb-2" />
             <span>Start Sniffer</span>
-          </button>
-          <button className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
+          </Link>
+          <Link to="/cves" className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
             <AlertTriangle size={24} className="text-cyber-warning mb-2" />
             <span>Check CVEs</span>
-          </button>
-          <button className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
+          </Link>
+          <div className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all cursor-pointer">
             <Shield size={24} className="text-cyber-success mb-2" />
             <span>Firewall Check</span>
-          </button>
+          </div>
         </div>
       </Card>
     </div>

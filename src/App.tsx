@@ -12,7 +12,14 @@ import CVEs from "./pages/CVEs";
 import NotFound from "./pages/NotFound";
 
 // Create a client for React Query
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
+    }
+  }
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -26,8 +33,8 @@ const App = () => (
             <Route path="/scanner" element={<Scanner />} />
             <Route path="/sniffer" element={<Sniffer />} />
             <Route path="/cves" element={<CVEs />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
