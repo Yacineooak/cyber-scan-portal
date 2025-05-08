@@ -2,6 +2,7 @@
 import { AlertTriangle, CheckCircle, Activity, Shield, Server, Search, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const StatsCard = ({ title, value, icon, className }: { title: string; value: string; icon: React.ReactNode; className?: string }) => (
   <Card className={`p-6 ${className}`}>
@@ -142,10 +143,10 @@ export function Dashboard() {
             <AlertTriangle size={24} className="text-cyber-warning mb-2" />
             <span>Check CVEs</span>
           </Link>
-          <div className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all cursor-pointer">
+          <Link to="/scanner" className="flex flex-col items-center justify-center p-4 bg-cyber-secondary rounded-md border border-cyber-muted hover:border-cyber-accent transition-all">
             <Shield size={24} className="text-cyber-success mb-2" />
             <span>Firewall Check</span>
-          </div>
+          </Link>
         </div>
       </Card>
     </div>

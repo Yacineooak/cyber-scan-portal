@@ -1,17 +1,43 @@
 
 import { useState } from "react";
-import { Bell, User, Shield } from "lucide-react";
+import { Bell, User, Shield, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const [notifications] = useState(3);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { toast } = useToast();
 
   const handleNotificationsClick = () => {
     toast({
       title: "Notifications",
       description: "You have 3 new security alerts to review.",
+    });
+  };
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    toast({
+      title: "Logged In",
+      description: "You have successfully logged in as Admin.",
+    });
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully.",
     });
   };
 
@@ -34,12 +60,30 @@ export function Header() {
           )}
         </div>
         
-        <div className="flex items-center space-x-2 cursor-pointer px-2 py-1 rounded-full hover:bg-cyber-muted">
-          <div className="bg-cyber-accent rounded-full p-1">
-            <User className="h-5 w-5" />
-          </div>
-          <span className="text-sm font-medium">Admin</span>
-        </div>
+        {isLoggedIn ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center space-x-2 cursor-pointer px-2 py-1 rounded-full hover:bg-cyber-muted">
+                <div className="bg-cyber-accent rounded-full p-1">
+                  <User className="h-5 w-5" />
+                </div>
+                <span className="text-sm font-medium">Admin</span>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button onClick={handleLogin} variant="outline" size="sm" className="flex items-center">
+            <LogIn className="h-4 w-4 mr-1" />
+            Login
+          </Button>
+        )}
       </div>
     </header>
   );

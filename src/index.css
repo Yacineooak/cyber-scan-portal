@@ -55,7 +55,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Fix: Remove circular dependency by using direct CSS instead of @apply for font-mono */
+  /* Fix: Remove circular dependency by using direct CSS */
   code, pre, .font-mono {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     color: #22d3ee; /* This is equivalent to text-cyan-400 */
