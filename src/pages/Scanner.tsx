@@ -1,6 +1,10 @@
 
 import { useState } from "react";
-import { Search, Play, X, AlertTriangle, Download, FileText, FileJson } from "lucide-react";
+import { 
+  Search, Play, X, AlertTriangle, Download, FileText, FileJson, 
+  Activity, Shield, Laptop, Command, Filter, Zap, Cpu, Globe, 
+  Network, FileSearch, Lightbulb 
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +24,8 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { useAiSuggestions } from "@/hooks/useAiSuggestions";
+import { AiSuggestionDialog } from "@/components/AiSuggestionDialog";
 
 // Mock data for scan results
 const mockPortResults = [
@@ -28,6 +34,19 @@ const mockPortResults = [
   { port: 443, service: "HTTPS", status: "open", banner: "Apache/2.4.41 (Ubuntu)", cve: "CVE-2021-44790" },
   { port: 3306, service: "MySQL", status: "filtered", banner: "", cve: null },
   { port: 8080, service: "HTTP-Proxy", status: "closed", banner: "", cve: null },
+];
+
+// Menu options
+const menuOptions = [
+  { id: "tcp", title: "Scanner TCP", icon: <Search size={20} /> },
+  { id: "udp", title: "Scanner UDP", icon: <Activity size={20} /> },
+  { id: "local", title: "Scanner Réseau Local", icon: <Network size={20} /> },
+  { id: "os", title: "Détection du système d'exploitation (OS)", icon: <Laptop size={20} /> },
+  { id: "firewall", title: "Détection de ports filtrés (pare-feu)", icon: <Shield size={20} /> },
+  { id: "quick", title: "Scan rapide (Top 100 ports)", icon: <Zap size={20} /> },
+  { id: "syn", title: "Scan SYN (admin/root)", icon: <Command size={20} /> },
+  { id: "http", title: "Scan de bannière HTTP", icon: <Globe size={20} /> },
+  { id: "multi-ip", title: "Scan multiple IPs (via fichier)", icon: <FileSearch size={20} /> },
 ];
 
 export function Scanner() {
@@ -41,11 +60,14 @@ export function Scanner() {
   const [scanProgress, setScanProgress] = useState(0);
   const [advancedOptions, setAdvancedOptions] = useState(false);
   const [udpEnabled, setUdpEnabled] = useState(false);
+  const [selectedVulnerability, setSelectedVulnerability] = useState("");
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const { toast } = useToast();
+  const { isLoading, suggestion, error, generateSuggestion } = useAiSuggestions();
 
   // Options for scanner
   const scanOptions = {
-    scanTypes: ["tcp", "udp", "syn", "quick", "multi-ip"],
+    scanTypes: menuOptions.map(option => option.id),
     portPresets: ["Common (1-1000)", "All (1-65535)", "Well-known (1-1024)", "Registered (1025-49151)", "Custom"],
   };
 
@@ -68,7 +90,7 @@ export function Scanner() {
     // Notify scan start
     toast({
       title: "Scan Started",
-      description: `Starting ${scanType.toUpperCase()} scan on ${targets.length > 0 ? `${targets.length} targets` : target}`,
+      description: `Starting ${menuOptions.find(opt => opt.id === scanType)?.title || scanType} on ${targets.length > 0 ? `${targets.length} targets` : target}`,
     });
     
     // Simulate scan progress
@@ -85,6 +107,16 @@ export function Scanner() {
             description: "The scan has completed successfully.",
             variant: "default",
           });
+          
+          // Check if vulnerabilities were found
+          const vulns = mockPortResults.filter(r => r.cve);
+          if (vulns.length > 0) {
+            toast({
+              title: "Vulnerabilities Detected",
+              description: `${vulns.length} vulnerabilities found. AI recommendations available.`,
+              variant: "destructive",
+            });
+          }
           
           return 100;
         }
@@ -133,6 +165,12 @@ export function Scanner() {
     // through a backend API endpoint
   };
 
+  const handleGetAiSuggestion = (cve: string) => {
+    setSelectedVulnerability(cve);
+    setAiDialogOpen(true);
+    generateSuggestion(cve);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -142,12 +180,53 @@ export function Scanner() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card className="lg:col-span-1">
           <div className="p-6 border-b border-cyber-muted">
             <h3 className="font-medium text-lg flex items-center">
               <Search size={18} className="mr-2 text-cyber-accent" />
-              Scan Configuration
+              Menu Principal
+            </h3>
+          </div>
+          <div className="p-6 space-y-1">
+            {menuOptions.map((option, idx) => (
+              <Button
+                key={option.id}
+                variant={scanType === option.id ? "default" : "outline"}
+                className="w-full justify-start mb-2"
+                onClick={() => setScanType(option.id)}
+              >
+                <div className="flex items-center">
+                  <span className="mr-2">{idx + 1}.</span>
+                  {option.icon}
+                  <span className="ml-2">{option.title}</span>
+                </div>
+              </Button>
+            ))}
+            <Button
+              variant="ghost"
+              className="w-full justify-start mb-2"
+              onClick={() => {
+                toast({
+                  title: "Application fermée",
+                  description: "Merci d'avoir utilisé CyberScan.",
+                });
+              }}
+            >
+              <div className="flex items-center">
+                <span className="mr-2">0.</span>
+                <X size={20} />
+                <span className="ml-2">Quitter</span>
+              </div>
+            </Button>
+          </div>
+        </Card>
+
+        <Card className="lg:col-span-3">
+          <div className="p-6 border-b border-cyber-muted">
+            <h3 className="font-medium text-lg flex items-center">
+              {menuOptions.find(opt => opt.id === scanType)?.icon}
+              <span className="ml-2">{menuOptions.find(opt => opt.id === scanType)?.title}</span>
             </h3>
           </div>
           <div className="p-6 space-y-4">
@@ -198,31 +277,17 @@ export function Scanner() {
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="scan-type">Scan Type</Label>
-              <Select value={scanType} onValueChange={setScanType}>
-                <select 
-                  id="scan-type"
-                  className="w-full bg-cyber-muted border border-cyber-accent/20 rounded p-2"
-                >
-                  {scanOptions.scanTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type.toUpperCase()} Scan
-                    </option>
-                  ))}
-                </select>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="port-range">Port Range</Label>
-              <Input
-                id="port-range"
-                placeholder="e.g., 1-1000 or 22,80,443"
-                value={portRange}
-                onChange={(e) => setPortRange(e.target.value)}
-              />
-            </div>
+            {scanType !== "quick" && (
+              <div className="space-y-2">
+                <Label htmlFor="port-range">Port Range</Label>
+                <Input
+                  id="port-range"
+                  placeholder="e.g., 1-1000 or 22,80,443"
+                  value={portRange}
+                  onChange={(e) => setPortRange(e.target.value)}
+                />
+              </div>
+            )}
 
             {scanType === "udp" && (
               <div className="flex items-center space-x-2">
@@ -310,7 +375,8 @@ export function Scanner() {
           </div>
         </Card>
 
-        <Card className="lg:col-span-2">
+        {/* Results Section */}
+        <Card className="lg:col-span-4">
           <Tabs defaultValue="results">
             <div className="border-b border-cyber-muted">
               <div className="px-6 pt-6 pb-2 flex justify-between items-center">
@@ -383,9 +449,14 @@ export function Scanner() {
                               Details
                             </Button>
                             {result.cve && (
-                              <Button variant="ghost" size="sm" className="h-8 text-cyber-warning">
-                                <AlertTriangle size={14} className="mr-1" />
-                                View CVE
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8 text-cyber-info flex items-center"
+                                onClick={() => handleGetAiSuggestion(result.cve)}
+                              >
+                                <Lightbulb size={14} className="mr-1" />
+                                AI Suggestion
                               </Button>
                             )}
                           </div>
@@ -441,6 +512,15 @@ export function Scanner() {
           </Tabs>
         </Card>
       </div>
+
+      <AiSuggestionDialog
+        open={aiDialogOpen}
+        onOpenChange={setAiDialogOpen}
+        vulnerability={selectedVulnerability}
+        isLoading={isLoading}
+        suggestion={suggestion}
+        error={error}
+      />
     </div>
   );
 }
