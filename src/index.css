@@ -43,6 +43,12 @@
     --sidebar-accent-foreground: 214 32% 91%;
     --sidebar-border: 214 32% 15%;
     --sidebar-ring: 196 100% 42%;
+    
+    /* Status colors for scan results */
+    --status-open: 142 71% 45%;
+    --status-closed: 0 62% 65%;
+    --status-filtered: 35 100% 50%;
+    --status-unknown: 214 32% 91%;
   }
 }
 
@@ -55,36 +61,35 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  /* Fix: Fixed circular dependency by removing @apply font-mono */
+  /* Fix the circular dependency by removing @apply */
   code, pre, .font-mono {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     color: #22d3ee; /* This is equivalent to text-cyan-400 */
   }
   
   .cyber-card {
-    @apply bg-cyber-secondary rounded-md border border-cyber-accent/20 shadow-md hover:shadow-cyber-accent/10 transition-all;
+    @apply bg-secondary rounded-md border border-cyber-accent/20 shadow-md hover:shadow-cyber-accent/10 transition-all;
   }
   
-  /* ... keep existing code for data-table and other utility classes */
-  
+  /* Status indicator styles */
   .status-indicator {
     @apply inline-block w-3 h-3 rounded-full mr-2;
   }
   
   .status-open {
-    @apply bg-status-open;
+    background-color: hsl(var(--status-open));
   }
   
   .status-closed {
-    @apply bg-status-closed;
+    background-color: hsl(var(--status-closed));
   }
   
   .status-filtered {
-    @apply bg-status-filtered;
+    background-color: hsl(var(--status-filtered));
   }
   
   .status-unknown {
-    @apply bg-status-unknown;
+    background-color: hsl(var(--status-unknown));
   }
   
   .glow {
@@ -94,5 +99,27 @@
   .glow::after {
     content: '';
     @apply absolute -inset-1 rounded-xl blur-sm bg-gradient-to-r from-cyber-accent to-cyber-info opacity-30 -z-10;
+  }
+  
+  /* Professional styling additions */
+  .menu-item {
+    @apply transition-all duration-200 hover:translate-x-1;
+  }
+  
+  .results-container {
+    @apply border border-border rounded-md;
+  }
+  
+  .scan-button {
+    @apply relative overflow-hidden transition-all duration-300;
+  }
+  
+  .scan-button::after {
+    content: '';
+    @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300;
+  }
+  
+  .scan-button:hover::after {
+    @apply opacity-100;
   }
 }
